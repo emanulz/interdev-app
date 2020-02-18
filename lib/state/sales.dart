@@ -16,6 +16,8 @@ mixin SalesModel on Model {
   Sale _selectedSale;
   ElectronicInvoice _selectedElectronicInvoice;
   ElectronicTicket _selectedElectronicTicket;
+  String _nextLink;
+  String _prevLink;
 
   // GETTERS METHODS OF THE MODEL
   List<Sale> get sales {
@@ -34,6 +36,23 @@ mixin SalesModel on Model {
     return _selectedElectronicTicket;
   }
 
+  String get nextSalePageLink {
+    return _nextLink;
+  }
+
+  String get previousSalePageLink {
+    return _prevLink;
+  }
+
+  clearSales() {
+    _sales = [];
+    _selectedSale = null;
+    _selectedElectronicInvoice = null;
+    _selectedElectronicTicket = null;
+    _nextLink = null;
+    _prevLink = null;
+  }
+
   Future<Null> fetchSales() async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -43,10 +62,18 @@ mixin SalesModel on Model {
     // String username = 'admin';
     // String password = 'admin123456';
     String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
-    return http.get('http://$apiURL/api/saleslistcustom/?limit=30&ordering=-consecutive', headers: <String, String>{'authorization': basicAuth})
+    String apiFullURL = '';
+    if (_nextLink == null) {
+      apiFullURL = 'http://$apiURL/api/saleslistcustom/?limit=10&ordering=-consecutive';
+    } else {
+      apiFullURL = _nextLink;
+    }
+    return http.get(apiFullURL, headers: <String, String>{'authorization': basicAuth})
     .then((http.Response response) {
       final Map<String, dynamic> saleData = json.decode(utf8.decode(response.bodyBytes));
       final List <dynamic> saleResults = saleData['results'];
+      _nextLink = saleData['next'];
+      _prevLink = saleData['previous'];
       final List<Sale> fetchedSalesList = [];
       if (saleResults.length > 0 ) {
         saleResults.forEach((dynamic sale) {
@@ -58,10 +85,10 @@ mixin SalesModel on Model {
             client: parseClient(sale['client']),
             cart: parseCart((sale['cart']))
           );
-          fetchedSalesList.add(fetchedSale);
+          _sales.add(fetchedSale);
         });
       }
-      _sales = fetchedSalesList;
+      // _sales = _sales.add(fetchedSalesList);
       notifyListeners();
     });
   

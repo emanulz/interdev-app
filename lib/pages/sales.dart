@@ -22,6 +22,7 @@ class _SalesPageState extends State<SalesPage> {
   @override
   initState() {
     widget.model.setIsLoading(true);
+    widget.model.clearSales();
     widget.model.fetchSales().then((_) {
       // TODO: MOVE THIS GET TO OTHER GLOBAL LOCATION
       widget.model.fetchProfileAndRelated().then((_) {
@@ -29,6 +30,12 @@ class _SalesPageState extends State<SalesPage> {
       });
     });
     super.initState();
+  }
+
+  void loadMoreSales() {
+    widget.model.fetchSales().then((_) {
+      widget.model.setIsLoading(false);
+    });
   }
 
   void getSaleAndPrint(_sale, _local, _taxPayer) {
@@ -74,6 +81,22 @@ class _SalesPageState extends State<SalesPage> {
           );
   }
 
+  Widget builLoadMoreBtn() {
+    if (widget.model.nextSalePageLink == null) {
+
+      return null;
+
+    } else {
+      return RaisedButton(
+        onPressed: () { loadMoreSales(); },
+        child: Text(
+          'Cargar Más...',
+          style: TextStyle(fontSize: 15)
+        ),
+      );
+    }
+  }
+
   Widget buildSearchField() {
     return TextField(
       decoration: InputDecoration(
@@ -112,6 +135,7 @@ class _SalesPageState extends State<SalesPage> {
                   return RefreshIndicator(
                     onRefresh: () {
                       model.setIsLoading(true);
+                      widget.model.clearSales();
                       return model.fetchSales().then((_) {
                         model.setIsLoading(false);
                       });
@@ -131,6 +155,11 @@ class _SalesPageState extends State<SalesPage> {
                           child: buildSearchField(),
                         ),
                         Expanded(child: _buildListBody(_sales, _local, _taxPayer)),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                          child: builLoadMoreBtn(),
+                        ),
                       ],
                     ),
                   );
