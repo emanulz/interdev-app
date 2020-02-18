@@ -21,6 +21,7 @@ class _PresalesPageState extends State<PresalesPage> {
   @override
   initState() {
     widget.model.setIsLoading(true);
+    widget.model.clearPresales();
     widget.model.fetchPresales().then((_) {
       // TODO: MOVE THIS GET TO OTHER GLOBAL LOCATION
       widget.model.fetchProfileAndRelated().then((_) {
@@ -28,6 +29,12 @@ class _PresalesPageState extends State<PresalesPage> {
       });
     });
     super.initState();
+  }
+
+  void loadMorePresales() {
+    widget.model.fetchPresales().then((_) {
+      widget.model.setIsLoading(false);
+    });
   }
 
   void getPresaleAndPrint(_presale, _local, _taxPayer) {
@@ -42,6 +49,22 @@ class _PresalesPageState extends State<PresalesPage> {
   }
 
   String _searchValue = '';
+
+  Widget builLoadMoreBtn() {
+    if (widget.model.nextPresalePageLink == null) {
+
+      return null;
+
+    } else {
+      return RaisedButton(
+        onPressed: () { loadMorePresales(); },
+        child: Text(
+          'Cargar Más...',
+          style: TextStyle(fontSize: 15)
+        ),
+      );
+    }
+  }
 
   Widget _buildListBody(_presales, _local, _taxPayer) {
     return _presales.length > 0
@@ -111,6 +134,7 @@ class _PresalesPageState extends State<PresalesPage> {
                   return RefreshIndicator(
                     onRefresh: () {
                       model.setIsLoading(true);
+                      widget.model.clearPresales();
                       return model.fetchPresales().then((_) {
                         model.setIsLoading(false);
                       });
@@ -130,6 +154,11 @@ class _PresalesPageState extends State<PresalesPage> {
                           child: buildSearchField(),
                         ),
                         Expanded(child: _buildListBody(_presales, _local, _taxPayer)),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                          child: builLoadMoreBtn(),
+                        ),
                       ],
                     ),
                   );

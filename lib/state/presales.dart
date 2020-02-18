@@ -16,6 +16,9 @@ mixin PresalesModel on Model {
   Presale _selectedPresale;
   ElectronicInvoice _selectedElectronicInvoice;
   ElectronicTicket _selectedElectronicTicket;
+  String _nextLink;
+  String _prevLink;
+  
 
   // GETTERS METHODS OF THE MODEL
   List<Presale> get presales {
@@ -34,6 +37,23 @@ mixin PresalesModel on Model {
     return _selectedElectronicTicket;
   }
 
+  String get nextPresalePageLink {
+    return _nextLink;
+  }
+
+  String get previousPresalePageLink {
+    return _prevLink;
+  }
+
+  clearPresales() {
+    _presales = [];
+    _selectedPresale = null;
+    _selectedElectronicInvoice = null;
+    _selectedElectronicTicket = null;
+    _nextLink = null;
+    _prevLink = null;
+  }
+
   Future<Null> fetchPresales() async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -43,9 +63,19 @@ mixin PresalesModel on Model {
     // String username = 'admin';
     // String password = 'admin123456';
     String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
-    return http.get('http://$apiURL/api/presales/?limit=30&ordering=-consecutive', headers: <String, String>{'authorization': basicAuth})
+
+    String apiFullURL = '';
+    if (_nextLink == null) {
+      apiFullURL = 'http://$apiURL/api/presales/?limit=10&ordering=-consecutive';
+    } else {
+      apiFullURL = _nextLink;
+    }
+
+    return http.get(apiFullURL, headers: <String, String>{'authorization': basicAuth})
     .then((http.Response response) {
       final Map<String, dynamic> presaleData = json.decode(utf8.decode(response.bodyBytes));
+      _nextLink = presaleData['next'];
+      _prevLink = presaleData['previous'];
       final List <dynamic> presaleResults = presaleData['results'];
       final List<Presale> fetchedPresalesList = [];
       if (presaleResults.length > 0 ) {
@@ -59,10 +89,10 @@ mixin PresalesModel on Model {
             cart: parseCart((presale['cart'])),
             presaleType: presale['presale_type']
           );
-          fetchedPresalesList.add(fetchedPresale);
+          _presales.add(fetchedPresale);
         });
       }
-      _presales = fetchedPresalesList;
+      // _presales = fetchedPresalesList;
       notifyListeners();
     });
   
