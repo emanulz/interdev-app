@@ -189,9 +189,9 @@ class PrintDocument{
       
       pdf.SizedBox(height: 10.0),
       //TOTALS
-      generateSubTotalsRow('Subtotal', presale.cart.cartSubtotalNoDiscount.toStringAsFixed(2), currencySymbol),
+      // generateSubTotalsRow('Subtotal', presale.cart.cartSubtotalNoDiscount.toStringAsFixed(2), currencySymbol),
       generateSubTotalsRow('Descuento', presale.cart.discountTotal.toStringAsFixed(2), currencySymbol),
-      generateSubTotalsRow('IVA', presale.cart.cartTaxes.toStringAsFixed(2), currencySymbol),
+      // generateSubTotalsRow('IVA', presale.cart.cartTaxes.toStringAsFixed(2), currencySymbol),
 
       generateSubtotalsSeparator(),
 
