@@ -21,6 +21,7 @@ class Presale {
   final double exchangeRate;
   final String created;
   final String updated;
+  final DateTime date;
 
   Presale({
     @required this.id,
@@ -41,5 +42,6 @@ class Presale {
     this.exchangeRate,
     this.created,
     this.updated,
+    this.date,
   });
 }

@@ -83,7 +83,8 @@ mixin SalesModel on Model {
             consecutive: sale['consecutive'],
             saleTotal: double.parse(sale['sale_total']),
             client: parseClient(sale['client']),
-            cart: parseCart((sale['cart']))
+            cart: parseCart((sale['cart'])),
+            date: DateTime.parse(sale['created'])
           );
           _sales.add(fetchedSale);
         });
@@ -113,7 +114,8 @@ mixin SalesModel on Model {
         consecutive: saleData['sale']['consecutive'],
         saleTotal: double.parse(saleData['sale']['sale_total']),
         client: parseClient(saleData['sale']['client']),
-        cart: parseCart((saleData['sale']['cart']))
+        cart: parseCart((saleData['sale']['cart'])),
+        date: DateTime.parse(saleData['sale']['created'])
       );
 
       final fetchedInvoice = saleData['invoice'] != null

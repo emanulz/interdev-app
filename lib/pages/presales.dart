@@ -1,5 +1,5 @@
 import '../models/auth.dart';
-
+import 'package:intl/intl.dart';
 import '../models/presale.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -67,6 +67,7 @@ class _PresalesPageState extends State<PresalesPage> {
   }
 
   Widget _buildListBody(_presales, _local, _taxPayer) {
+    final DateFormat formatter = new DateFormat('dd-MM-yyyy HH:mm:ss');
     return _presales.length > 0
         ? ListView.builder(
             itemCount: _presales.length,
@@ -77,7 +78,7 @@ class _PresalesPageState extends State<PresalesPage> {
                     leading: Text(_presales[index].consecutive.toString()),
                     title: Text(
                         '${_presales[index].client.name} ${_presales[index].client.lastName}'),
-                    subtitle: Text(_presales[index].cart.cartTotal.toString()),
+                    subtitle: Text('${formatter.format(_presales[index].date.subtract(new Duration(hours: 6)))}     ${_presales[index].cart.cartTotal.toString()}'),
                     // subtitle: _presales[index].idNum != null
                     //     ? Text('Identificación: ${_presales[index].idNum}')
                     //     : Text('Identificación: No existente'),

@@ -22,6 +22,7 @@ class Sale {
   final double exchangeRate;
   final String created;
   final String updated;
+  final DateTime date;
 
   Sale({
     @required this.id,
@@ -42,6 +43,7 @@ class Sale {
     this.currencyCode,
     this.exchangeRate,
     this.created,
-    this.updated
+    this.updated,
+    this.date,
   });
 }

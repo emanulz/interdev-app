@@ -87,7 +87,8 @@ mixin PresalesModel on Model {
             saleTotal: double.parse(presale['sale_total']),
             client: parseClient(presale['client']),
             cart: parseCart((presale['cart'])),
-            presaleType: presale['presale_type']
+            presaleType: presale['presale_type'],
+            date: DateTime.parse(presale['created']),
           );
           _presales.add(fetchedPresale);
         });
@@ -118,7 +119,8 @@ mixin PresalesModel on Model {
         saleTotal: double.parse(presaleResults[0]['sale_total']),
         client: parseClient(presaleResults[0]['client']),
         cart: parseCart((presaleResults[0]['cart'])),
-        presaleType: presaleResults[0]['presale_type']
+        presaleType: presaleResults[0]['presale_type'],
+        date: DateTime.parse(presaleResults[0]['created']),
       );
     
       return {

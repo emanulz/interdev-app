@@ -1,5 +1,5 @@
 import '../models/auth.dart';
-
+import 'package:intl/intl.dart';
 import '../models/sale.dart';
 import '../models/electronic_documents.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +52,7 @@ class _SalesPageState extends State<SalesPage> {
   String _searchValue = '';
 
   Widget _buildListBody(_sales, _local, _taxPayer) {
+    final DateFormat formatter = new DateFormat('dd-MM-yyyy HH:mm:ss');
     return _sales.length > 0
         ? ListView.builder(
             itemCount: _sales.length,
@@ -62,7 +63,7 @@ class _SalesPageState extends State<SalesPage> {
                     leading: Text(_sales[index].consecutive.toString()),
                     title: Text(
                         '${_sales[index].client.name} ${_sales[index].client.lastName}'),
-                    subtitle: Text(_sales[index].saleTotal.toString()),
+                    subtitle: Text('${formatter.format(_sales[index].date.subtract(new Duration(hours: 6)))}     ${_sales[index].saleTotal.toString()}'),
                     // subtitle: _sales[index].idNum != null
                     //     ? Text('Identificación: ${_sales[index].idNum}')
                     //     : Text('Identificación: No existente'),
